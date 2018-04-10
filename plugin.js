@@ -1,15 +1,17 @@
 "use strict";
 
 const bunyan = require("bunyan"),
-	path = require("path");
+	{basename} = require("path");
 
 function logger (path = "server.log") {
 	const logger = createLogger(path);
 
 	return (request, response) => {
-		request.log = logger.child({id});
+		request.log = logger.child({
+			id: request.getId()
+		});
 
-		request.log({
+		request.log.info({
 			ip: request.getIp(),
 			method: request.getMethod(),
 			host: request.getHeader("host"),
@@ -17,7 +19,7 @@ function logger (path = "server.log") {
 		}, "request");
 
 		response.on("finish", () => {
-			request.log({
+			request.log.info({
 				elapsed: request.getElapsedTime().toFixed(3),
 				status: response.getStatus(),
 				headers: response.getHeaders()
@@ -41,13 +43,13 @@ function createLogger (path) {
 		options = path;
 	} else {
 		options = {
-	        name: path.basename(path, ".log"),
-	        stream: {
+	        name: basename(path, ".log"),
+	        streams: [{
 	            type: "rotating-file",
 	            path: path,
 	            period: "1d",
 	            count: 5
-	        }
+	        }]
 	    }
 	}
 

@@ -45,11 +45,11 @@ for a given request is easy to find. Logging within other request handlers
 can be done like this
 
 ```javascript
-request.log("some awesome message");
+request.log.info("some awesome message");
 ```
 or
 ```javascript
-request.warn({danger: true}, "Watch out!");
+request.log.warn({danger: true}, "Watch out!");
 ```
 
 See [bunyan](https://www.npmjs.com/package/bunyan) for more details.
@@ -68,7 +68,7 @@ Reference
 	with a path the bunyan logger options are set as follows.
 
 	- **name:** *path basename (ie...server)*
-	- **stream:**
+	- **streams:** *array*
 	  - **type:** `rotating-file`
 	  - **path:** *path*
 	  - **period:** `1d`
