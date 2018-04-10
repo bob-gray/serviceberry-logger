@@ -1,15 +1,24 @@
 serviceberry-logger
 ===================
 
+[![npm version](https://badge.fury.io/js/serviceberry.svg)](https://badge.fury.io/js/serviceberry)
+
 A logger plugin for [Serviceberry](https://serviceberry.js.org).
 
 Logs HTTP requests and responses and attaches a child logger to each request at
 `request.log()`. Loggers are [bunyan](https://www.npmjs.com/package/bunyan) loggers.
 
+Install
+-------
+
+```shell-script
+npm install serviceberry-logger
+```
+
 Example
 -------
 
-```JavaScript
+```javascript
 logger = require("serviceberry-logger");
 
 trunk.use(logger("server.log"))
@@ -35,11 +44,11 @@ Child loggers for each request are bound with the request id so all log output
 for a given request is easy to find. Logging within other request handlers
 can be done like this
 
-```JavaScript
+```javascript
 request.log("some awesome message");
 ```
 or
-```JavaScript
+```javascript
 request.warn({danger: true}, "Watch out!");
 ```
 
