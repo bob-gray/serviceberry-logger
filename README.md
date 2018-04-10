@@ -49,7 +49,7 @@ See [bunyan](https://www.npmjs.com/package/bunyan) for more details.
 Reference
 ---------
 
-serviceberry-logger can be called with one of two signatures.
+`serviceberry-logger` can be called with one of two signatures.
 
 ### logger(path)
 
@@ -75,7 +75,7 @@ serviceberry-logger can be called with one of two signatures.
 
 ### logger.error(request)
 
-serviceberry-logger provides a convenient serviceberry style catch handler if
+`serviceberry-logger` provides a convenient Serviceberry style catch handler if
 you'd like to log errors as well.
 
   - **request**
