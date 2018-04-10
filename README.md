@@ -54,6 +54,7 @@ serviceberry-logger can be called with one of two signatures.
 ### logger(path)
 
   - **path** *string*
+
     The path to the log file. Defaults to `server.log`. When the plugin is called
 	with a path the bunyan logger options are set as follows.
 
@@ -67,6 +68,7 @@ serviceberry-logger can be called with one of two signatures.
 ### logger(options)
 
   - **options** *object*
+
     If the stock options above are not what you want, you can pass in your own
 	options. See [bunyan](https://www.npmjs.com/package/bunyan) for options
 	documentation. These options are passed through to `bunyan.createLoggger`.
@@ -77,4 +79,5 @@ serviceberry-logger provides a convenient serviceberry style catch handler if
 you'd like to log errors as well.
 
   - **request**
+
     Serviceberry request object
