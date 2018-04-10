@@ -73,8 +73,8 @@ serviceberry-logger can be called with one of two signatures.
 
 ### logger.error(request)
 
-serviceberry-logger provides a convenient catch handler as well if you'd like
-to log errors as well.
+serviceberry-logger provides a convenient serviceberry style catch handler if
+you'd like to log errors as well.
 
   - **request**
     Serviceberry request object
