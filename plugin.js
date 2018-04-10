@@ -1,6 +1,6 @@
 "use strict";
 
-const {createLogger} = require("bunyan"),
+const bunyan = require("bunyan"),
 	path = require("path");
 
 function logger (path = "server.log") {
@@ -51,7 +51,7 @@ function createLogger (path) {
 	    }
 	}
 
-	return createLogger(options);
+	return bunyan.createLogger(options);
 }
 
 module.exports = logger;
