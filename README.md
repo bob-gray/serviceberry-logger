@@ -1,7 +1,7 @@
 serviceberry-logger
 ===================
 
-[![npm version](https://badge.fury.io/js/serviceberry.svg)](https://badge.fury.io/js/serviceberry)
+[![npm version](https://badge.fury.io/js/serviceberry-logger.svg)](https://badge.fury.io/js/serviceberry-logger)
 
 A logger plugin for [Serviceberry](https://serviceberry.js.org).
 
