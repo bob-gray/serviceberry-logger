@@ -1,9 +1,13 @@
 "use strict";
 
 const bunyan = require("bunyan"),
-	{basename} = require("path");
+	{promisify} = require("util"),
+	{dirname, basename} = require("path"),
+	mkdirp = promisify(require("mkdirp"));
 
-function logger (path = "server.log") {
+async function logger (path = "logs/server.log") {
+	await mkdirp(dirname(path));
+
 	const logger = createLogger(path);
 
 	return (request, response) => {
@@ -15,7 +19,8 @@ function logger (path = "server.log") {
 			ip: request.getIp(),
 			method: request.getMethod(),
 			host: request.getHeader("host"),
-			url: request.getUrl().href
+			url: request.getUrl().href,
+			headers: request.getHeaders()
 		}, "request");
 
 		response.on("finish", () => {
