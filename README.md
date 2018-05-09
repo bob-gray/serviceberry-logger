@@ -18,7 +18,7 @@ npm install serviceberry-logger
 Example
 -------
 
-```javascript
+```js
 logger = require("serviceberry-logger");
 
 trunk.use(logger("server.log"))
@@ -44,11 +44,11 @@ Child loggers for each request are bound with the request id so all log output
 for a given request is easy to find. Logging within other request handlers
 can be done like this
 
-```javascript
+```js
 request.log.info("some awesome message");
 ```
 or
-```javascript
+```js
 request.log.warn({danger: true}, "Watch out!");
 ```
 
@@ -87,6 +87,6 @@ Reference
 `serviceberry-logger` provides a convenient Serviceberry style catch handler if
 you'd like to log errors as well.
 
-  - **request**
+  - **request** *object*
 
     Serviceberry request object
