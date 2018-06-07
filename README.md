@@ -1,6 +1,9 @@
 serviceberry-logger
 ===================
 
+[![CircleCI](https://circleci.com/gh/bob-gray/serviceberry-logger.svg?style=svg)](https://circleci.com/gh/bob-gray/serviceberry-logger)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/b427036ce3a06d83d218/test_coverage)](https://codeclimate.com/github/bob-gray/serviceberry-logger/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/b427036ce3a06d83d218/maintainability)](https://codeclimate.com/github/bob-gray/serviceberry-logger/maintainability)
 [![npm version](https://badge.fury.io/js/serviceberry-logger.svg)](https://badge.fury.io/js/serviceberry-logger)
 
 A logger plugin for [Serviceberry](https://serviceberry.js.org).
