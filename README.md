@@ -6,7 +6,7 @@ serviceberry-logger
 A logger plugin for [Serviceberry](https://serviceberry.js.org).
 
 Logs HTTP requests and responses and attaches a child logger to each request at
-`request.log()`. Loggers are [bunyan](https://www.npmjs.com/package/bunyan) loggers.
+`request.log`. Loggers are [bunyan](https://www.npmjs.com/package/bunyan) loggers.
 
 Install
 -------
@@ -31,9 +31,11 @@ Each request is logged when received as
   - **method** *string*
   - **host** *string*
   - **url** *string*
+  - **headers** *object*
 
 Each response is logged when finished as
   - **msg** `response`
+  - **id** *string*
   - **elapsed** *number milliseconds*
   - **status**
     - **code** *number*
@@ -64,7 +66,7 @@ Reference
 
   - **path** *string*
 
-    The path to the log file. Defaults to `server.log`. When the plugin is called
+    The path to the log file. Defaults to `logs/server.log`. When the plugin is called
 	with a path the bunyan logger options are set as follows.
 
 	- **name:** *path basename (ie...server)*
