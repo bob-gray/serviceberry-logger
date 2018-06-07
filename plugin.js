@@ -3,9 +3,10 @@
 const bunyan = require("bunyan"),
 	{promisify} = require("util"),
 	{dirname, basename} = require("path"),
-	mkdirp = promisify(require("mkdirp"));
+	mkdirp = promisify(require("mkdirp")),
+	thousandths = 3;
 
-async function logger (path = "logs/server.log") {
+async function plugin (path = "logs/server.log") {
 	await mkdirp(dirname(path));
 
 	const logger = createLogger(path);
@@ -18,14 +19,14 @@ async function logger (path = "logs/server.log") {
 		request.log.info({
 			ip: request.getIp(),
 			method: request.getMethod(),
-			host: request.getHeader("host"),
-			url: request.getUrl().href,
+			host: request.getHost(),
+			url: request.getFullUrl(),
 			headers: request.getHeaders()
 		}, "request");
 
 		response.on("finish", () => {
 			request.log.info({
-				elapsed: request.getElapsedTime().toFixed(3),
+				elapsed: request.getElapsedTime().toFixed(thousandths),
 				status: response.getStatus(),
 				headers: response.getHeaders()
 			}, "response");
@@ -33,9 +34,9 @@ async function logger (path = "logs/server.log") {
 
 		request.proceed();
 	};
-};
+}
 
-logger.error = request => {
+plugin.error = request => {
 	request.log.error(request.error);
 
 	throw request.error;
@@ -48,17 +49,17 @@ function createLogger (path) {
 		options = path;
 	} else {
 		options = {
-	        name: basename(path, ".log"),
-	        streams: [{
-	            type: "rotating-file",
-	            path: path,
-	            period: "1d",
-	            count: 5
-	        }]
-	    }
+			name: basename(path, ".log"),
+			streams: [{
+				type: "rotating-file",
+				path: path,
+				period: "1d",
+				count: 5
+			}]
+		};
 	}
 
 	return bunyan.createLogger(options);
 }
 
-module.exports = logger;
+module.exports = plugin;
