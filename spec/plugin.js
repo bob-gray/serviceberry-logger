@@ -1,38 +1,65 @@
 "use strict";
 
-const logger = require("../plugin"),
-	Request = require("serviceberry/src/Request"),
-	{HttpError} = require("serviceberry"),
-	httpMocks = require("node-mocks-http");
+const Request = require("serviceberry/src/Request"),
+	httpMocks = require("node-mocks-http"),
+	mock = require("mock-require");
+
+mock("bunyan", {
+	createLogger () {
+		return {
+			child () {
+				return jasmine.createSpyObj("child", ["info"]);
+			},
+			addStream: Function.prototype
+		};
+	}
+});
+
+var logger = require("../src/plugin");
 
 describe("serviceberry-logger", () => {
 	var request,
-		response;
+		response,
+		log;
 
-	beforeEach(() => {
+	beforeEach(async () => {
+		log = await logger({
+			name: "test"
+		});
 		request = createRequest();
 		response = createResponse();
 	});
 
-	it("should ...", () => {
+	it("should ...", async () => {
 		// TODO: mock bunyan and implement tests
+		log(request, response);
+
+		expect(request.log.info).toHaveBeenCalled();
 	});
 });
 
-function createRequest (body) {
+function createRequest () {
 	var incomingMessage = httpMocks.createRequest({
 			url: "/"
 		}),
 		request;
 
-	incomingMessage.setEncoding = Function.prototype;
+	Object.assign(incomingMessage, {
+		setEncoding: Function.prototype,
+		connection: {
+			encrypted: true
+		},
+		socket: {
+			remoteAddress: "0.0.0.0"
+		}
+	});
 	request = new Request(incomingMessage);
 	request.proceed = jasmine.createSpy("request.proceed");
 
 	return request;
 }
 
-function createResponse (body) {
+function createResponse () {
 	var response = jasmine.createSpyObj("Response", [
 		"on",
 		"getStatus",
