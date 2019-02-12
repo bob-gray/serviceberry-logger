@@ -3,13 +3,12 @@
 const bunyan = require("bunyan"),
 	{promisify} = require("util"),
 	{dirname, basename} = require("path"),
+	InspectorConsoleStream = require("./InspectorConsoleStream"),
 	mkdirp = promisify(require("mkdirp")),
 	thousandths = 3;
 
-async function plugin (path = "logs/server.log") {
-	await mkdirp(dirname(path));
-
-	const logger = createLogger(path);
+async function plugin (path = "logs/service.log") {
+	const logger = await createLogger(path);
 
 	return (request, response) => {
 		request.log = logger.child({
@@ -42,12 +41,15 @@ plugin.error = request => {
 	throw request.error;
 };
 
-function createLogger (path) {
-	var options;
+async function createLogger (path) {
+	var options,
+		logger;
 
 	if (typeof path === "object") {
 		options = path;
 	} else {
+		await mkdirp(dirname(path));
+
 		options = {
 			name: basename(path, ".log"),
 			streams: [{
@@ -59,7 +61,18 @@ function createLogger (path) {
 		};
 	}
 
-	return bunyan.createLogger(options);
+	logger = bunyan.createLogger(options);
+
+	if (process.env.NODE_ENV !== "production") {
+		logger.addStream({
+			name: "console",
+			type: "raw",
+			stream: new InspectorConsoleStream(),
+			closeOnExit: false
+		});
+	}
+
+	return logger;
 }
 
 module.exports = plugin;
