@@ -30,9 +30,8 @@ describe("serviceberry-logger", () => {
 		response = createResponse();
 	});
 
-	it("should ...", async () => {
-		// TODO: mock bunyan and implement tests
-		log(request, response);
+	it("should log the request", async () => {
+		log.use(request, response);
 
 		expect(request.log.info).toHaveBeenCalled();
 	});
@@ -61,7 +60,7 @@ function createRequest () {
 
 function createResponse () {
 	var response = jasmine.createSpyObj("Response", [
-		"on",
+		"once",
 		"getStatus",
 		"getHeaders"
 	]);

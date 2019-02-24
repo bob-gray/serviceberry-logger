@@ -7,12 +7,27 @@ const bunyan = require("bunyan"),
 	mkdirp = promisify(require("mkdirp")),
 	thousandths = 3;
 
-async function plugin (path = "logs/service.log") {
-	const logger = await createLogger(path);
+class Logger {
+	constructor (options = {}) {
+		return this.init(options);
+	}
 
-	return (request, response) => {
-		request.log = logger.child({
-			id: request.getId()
+	async init (options) {
+		this.log = await createLogger(options);
+
+		Object.freeze(this);
+
+		return this;
+	}
+
+	use (request, response) {
+		Object.defineProperty(request, "log", {
+			configurable: false,
+			enumerable: false,
+			writable: false,
+			value: Object.freeze(this.log.child({
+				id: request.getId()
+			}))
 		});
 
 		request.log.info({
@@ -23,7 +38,7 @@ async function plugin (path = "logs/service.log") {
 			headers: request.getHeaders()
 		}, "request");
 
-		response.on("finish", () => {
+		response.once("finish", () => {
 			request.log.info({
 				elapsed: request.getElapsedTime().toFixed(thousandths),
 				status: response.getStatus(),
@@ -32,23 +47,56 @@ async function plugin (path = "logs/service.log") {
 		});
 
 		request.proceed();
-	};
+	}
+
+	error (request) {
+		request.log.error(request.error);
+
+		throw request.error;
+	}
 }
 
-plugin.error = request => {
-	request.log.error(request.error);
+Object.freeze(Object.setPrototypeOf(Logger.prototype, null));
 
-	throw request.error;
-};
+function plugin (options) {
+	return new Logger(options);
+}
 
-async function createLogger (path) {
-	var options,
-		logger;
+Object.defineProperties(plugin, {
+	Logger: {
+		configurable: false,
+		enumerable: false,
+		writable: false,
+		value: Logger
+	},
+	error: {
+		configurable: false,
+		enumerable: false,
+		writable: false,
+		value: Logger.prototype.plugin
+	}
+});
 
-	if (typeof path === "object") {
-		options = path;
-	} else {
-		await mkdirp(dirname(path));
+async function createLogger (options) {
+	var logger = bunyan.createLogger(await expandOptions(options));
+
+	if (process.env.NODE_ENV !== "production") {
+		logger.addStream({
+			name: "console",
+			type: "raw",
+			stream: new InspectorConsoleStream(),
+			closeOnExit: false
+		});
+	}
+
+	return logger;
+}
+
+async function expandOptions (options) {
+	var path;
+
+	if (typeof options === "string") {
+		path = options;
 
 		options = {
 			name: basename(path, ".log"),
@@ -61,18 +109,23 @@ async function createLogger (path) {
 		};
 	}
 
-	logger = bunyan.createLogger(options);
-
-	if (process.env.NODE_ENV !== "production") {
-		logger.addStream({
-			name: "console",
-			type: "raw",
-			stream: new InspectorConsoleStream(),
-			closeOnExit: false
-		});
+	if (options.stream && options.stream.path) {
+		await makeDirectory(options.stream);
 	}
 
-	return logger;
+	if (options.streams) {
+		await Promise.all(options.streams.filter(hasPath).map(makeDirectory));
+	}
+
+	return options;
+}
+
+function hasPath (stream) {
+	return stream.path;
+}
+
+function makeDirectory (stream) {
+	return mkdirp(dirname(stream.path));
 }
 
 module.exports = plugin;
