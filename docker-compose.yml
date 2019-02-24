@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  module:
+    image: node:$NODE_VERSION-alpine
+    init: true
+    command: npx inspect
+    env_file:
+      - .env
+    network_mode: bridge
+    ports:
+      - "9229:9229"
+    working_dir: $WORKDIR
+    volumes:
+      - ./:$WORKDIR
