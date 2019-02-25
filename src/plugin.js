@@ -23,11 +23,11 @@ class Logger {
 	use (request, response) {
 		Object.defineProperty(request, "log", {
 			configurable: false,
-			enumerable: false,
+			enumerable: true,
 			writable: false,
-			value: Object.freeze(this.log.child({
+			value: this.log.child({
 				id: request.getId()
-			}))
+			})
 		});
 
 		request.log.info({
