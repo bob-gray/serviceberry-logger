@@ -1,6 +1,6 @@
 {
   "name": "serviceberry-logger",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A logger plugin for Serviceberry",
   "main": "src/plugin.js",
   "files": [
