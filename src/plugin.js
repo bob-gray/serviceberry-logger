@@ -73,7 +73,7 @@ Object.defineProperties(plugin, {
 		configurable: false,
 		enumerable: false,
 		writable: false,
-		value: Logger.prototype.plugin
+		value: Logger.prototype.error
 	}
 });
 
