@@ -4,8 +4,7 @@ const bunyan = require("bunyan"),
 	{promisify} = require("util"),
 	{dirname, basename} = require("path"),
 	InspectorConsoleStream = require("./InspectorConsoleStream"),
-	mkdirp = promisify(require("mkdirp")),
-	thousandths = 3;
+	mkdirp = promisify(require("mkdirp"));
 
 class Logger {
 	constructor (options = {}) {
@@ -40,7 +39,7 @@ class Logger {
 
 		response.once("finish", () => {
 			request.log.info({
-				elapsed: request.getElapsedTime().toFixed(thousandths),
+				elapsed: request.getElapsedTime(),
 				status: response.getStatus(),
 				headers: response.getHeaders()
 			}, "response");
