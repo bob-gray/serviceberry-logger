@@ -4,7 +4,7 @@ const {Writable} = require("stream"),
 	{nameFromLevel, INFO, WARN, ERROR} = require("bunyan"),
 	inspector = require("inspector"),
 	{constructor: Chalk} = require("chalk"),
-	{debug, info, warn, error} = inspector.console,
+	{debug, warn, error, info: log} = inspector.console,
 	{gray, blue, black, red} = new Chalk({
 		enabled: true,
 		level: 1
@@ -32,6 +32,18 @@ class InspectorConsoleStream extends Writable {
 		}
 
 		callback();
+	}
+}
+
+function info (label, record) {
+	const {msg, method, url, status} = record;
+
+	if (msg === "request" && method && url) {
+		log(label, `${method} ${url}`, record);
+	} else if (msg === "response" && status) {
+		log(label, `${status.code} ${status.text}`, record);
+	} else {
+		log(label, record);
 	}
 }
 
