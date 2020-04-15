@@ -1,10 +1,9 @@
 "use strict";
 
 const bunyan = require("bunyan"),
-	{promisify} = require("util"),
 	{dirname, basename} = require("path"),
 	InspectorConsoleStream = require("./InspectorConsoleStream"),
-	mkdirp = promisify(require("mkdirp"));
+	mkdirp = require("mkdirp");
 
 class Logger {
 	constructor (options = {}) {
