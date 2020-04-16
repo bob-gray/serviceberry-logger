@@ -9,7 +9,7 @@ serviceberry-logger
 A logger plugin for [Serviceberry](https://serviceberry.js.org).
 
 Logs HTTP requests and responses and attaches a child logger to each request at
-`request.log`. Loggers are [bunyan](https://www.npmjs.com/package/bunyan) loggers.
+`request.log`. Loggers are [winston](https://www.npmjs.com/package/winston) loggers.
 
 Install
 -------
@@ -29,15 +29,16 @@ trunk.use(logger("server.log"))
 ```
 
 Each request is logged when received as
-  - **msg** `request`
+  - **message** `request`
   - **id** *string*
+  - **ip** *string*
   - **method** *string*
   - **host** *string*
   - **url** *string*
   - **headers** *object*
 
 Each response is logged when finished as
-  - **msg** `response`
+  - **message** `response`
   - **id** *string*
   - **elapsed** *number milliseconds*
   - **status**
@@ -54,10 +55,10 @@ request.log.info("some awesome message");
 ```
 or
 ```js
-request.log.warn({danger: true}, "Watch out!");
+request.log.warn("Watch out!", {danger: true});
 ```
 
-See [bunyan](https://www.npmjs.com/package/bunyan) for more details.
+See [winston](https://www.npmjs.com/package/winston) for more details.
 
 
 Reference
@@ -69,23 +70,17 @@ Reference
 
   - **path** *string*
 
-    The path to the log file. Defaults to `logs/server.log`. When the plugin is called
-	with a path the bunyan logger options are set as follows.
-
-	- **name:** *path basename (ie...server)*
-	- **streams:** *array*
-	  - **type:** `rotating-file`
-	  - **path:** *path*
-	  - **period:** `1d`
-	  - **count:** `5`
+    The path to the log file such as `logs/server.log`.
 
 ### logger(options)
 
   - **options** *object*
 
-    If the stock options above are not what you want, you can pass in your own
-	options. See [bunyan](https://www.npmjs.com/package/bunyan) for options
-	documentation. These options are passed through to `bunyan.createLoggger`.
+      - **path**
+
+        See above
+
+      - All other properties are the meta data included with the logs
 
 ### logger.error(request)
 

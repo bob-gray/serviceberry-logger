@@ -1,9 +1,15 @@
 "use strict";
 
-const bunyan = require("bunyan"),
+const {
+		format: {combine, timestamp, json},
+		transports: {Console},
+		...winston
+	} = require("winston"),
+	DailyRotateFile = require("winston-daily-rotate-file"),
 	{dirname, basename} = require("path"),
-	InspectorConsoleStream = require("./InspectorConsoleStream"),
-	mkdirp = require("mkdirp");
+	InspectorConsoleTransport = require("./InspectorConsoleTransport"),
+	mkdirp = require("mkdirp"),
+	NODE_ENV = process.env;
 
 class Logger {
 	constructor (options = {}) {
@@ -29,19 +35,21 @@ class Logger {
 		});
 
 		request.log.info({
+			message: "request",
 			ip: request.getIp(),
 			method: request.getMethod(),
 			host: request.getHost(),
 			url: request.getFullUrl(),
 			headers: request.getHeaders()
-		}, "request");
+		});
 
 		response.once("finish", () => {
 			request.log.info({
+				message: "response",
 				elapsed: request.getElapsedTime(),
 				status: response.getStatus(),
 				headers: response.getHeaders()
-			}, "response");
+			});
 		});
 
 		request.proceed();
@@ -76,50 +84,54 @@ Object.defineProperties(plugin, {
 });
 
 async function createLogger (options) {
-	var logger = bunyan.createLogger(await expandOptions(options));
-
-	if (process.env.NODE_ENV !== "production") {
-		logger.addStream({
-			name: "console",
-			type: "raw",
-			stream: new InspectorConsoleStream(),
-			closeOnExit: false
-		});
-	}
-
-	return logger;
-}
-
-async function expandOptions (options) {
-	var path;
+	var level,
+		transports = [];
 
 	if (typeof options === "string") {
-		path = options;
-
 		options = {
-			name: basename(path, ".log"),
-			streams: [{
-				type: "rotating-file",
-				path: path,
-				period: "1d",
-				count: 5
-			}]
+			path: options
 		};
 	}
 
-	if (options.stream && options.stream.path) {
-		await makeDirectory(options.stream);
+	if (options.path) {
+		await makeDirectory(options.path);
+
+		transports.push(new DailyRotateFile({
+			filename: basename(options.path, ".log") + "%DATE%.log",
+			dirname: dirname(options.path),
+			maxFiles: 5
+		}));
+
+		delete options.path;
 	}
 
-	if (options.streams) {
-		await Promise.all(options.streams.filter(hasPath).map(makeDirectory));
+	if (NODE_ENV !== "production") {
+		level = "silly";
+		transports.push(new InspectorConsoleTransport());
 	}
 
-	return options;
-}
+	transports.push(new Console());
 
-function hasPath (stream) {
-	return stream.path;
+	return winston.createLogger({
+		level,
+		transports,
+		defaultMeta: {
+			...options
+		},
+		format: combine(
+			{
+				transform (record) {
+					if (record.originalError instanceof Error) {
+						delete record.originalError;
+					}
+
+					return record;
+				}
+			},
+			timestamp(),
+			json()
+		)
+	});
 }
 
 function makeDirectory (stream) {
