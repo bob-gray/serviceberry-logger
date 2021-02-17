@@ -1,6 +1,6 @@
 {
   "name": "serviceberry-logger",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A logger plugin for Serviceberry",
   "main": "src/plugin.js",
   "files": [
@@ -37,20 +37,20 @@
   },
   "homepage": "https://github.com/bob-gray/serviceberry-logger#readme",
   "dependencies": {
-    "chalk": "^4.0.0",
+    "chalk": "^4.1.0",
     "mkdirp": "^1.0.4",
-    "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.4.2",
-    "winston-transport": "^4.3.0"
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.0",
+    "winston-transport": "^4.4.0"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "jasmine": "^3.5.0",
-    "jasmine-spec-reporter": "^5.0.1",
+    "eslint": "^7.20.0",
+    "jasmine": "^3.6.4",
+    "jasmine-spec-reporter": "^6.0.0",
     "mock-require": "^3.0.3",
-    "node-mocks-http": "^1.8.1",
-    "nyc": "^15.0.1",
-    "serviceberry": "^0.8.0"
+    "node-mocks-http": "^1.10.1",
+    "nyc": "^15.1.0",
+    "serviceberry": "^0.10.0"
   },
   "peerDependencies": {
     "serviceberry": "<2"

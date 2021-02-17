@@ -134,8 +134,8 @@ async function createLogger (options) {
 	});
 }
 
-function makeDirectory (stream) {
-	return mkdirp(dirname(stream.path));
+function makeDirectory (path) {
+	return mkdirp(dirname(path));
 }
 
 module.exports = plugin;
