@@ -63,21 +63,33 @@ function createRequest () {
 	var incomingMessage = httpMocks.createRequest({
 			url: "/"
 		}),
-		request;
+		request = new Request(Object.assign(incomingMessage, {
+			setEncoding: Function.prototype,
+			connection: {
+				encrypted: true
+			},
+			socket: {
+				remoteAddress: "0.0.0.0"
+			}
+		}));
 
-	Object.assign(incomingMessage, {
-		setEncoding: Function.prototype,
-		connection: {
-			encrypted: true
-		},
-		socket: {
-			remoteAddress: "0.0.0.0"
+	return new Proxy(request, {
+		get (target, name, receiver) {
+			var value;
+
+			if (name === "proceed") {
+				value = jasmine.createSpy("request.proceed");
+			} else {
+				value = Reflect.get(target, name, receiver);
+			}
+
+			if (typeof value === "function") {
+				value = value.bind(target);
+			}
+
+			return value;
 		}
 	});
-	request = new Request(incomingMessage);
-	request.proceed = jasmine.createSpy("request.proceed");
-
-	return request;
 }
 
 function createResponse () {
