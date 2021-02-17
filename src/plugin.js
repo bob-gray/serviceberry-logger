@@ -97,7 +97,7 @@ async function createLogger (options) {
 		await makeDirectory(options.path);
 
 		transports.push(new DailyRotateFile({
-			filename: basename(options.path, ".log") + "%DATE%.log",
+			filename: basename(options.path, ".log") + "-%DATE%.log",
 			dirname: dirname(options.path),
 			maxFiles: 5
 		}));
@@ -105,12 +105,16 @@ async function createLogger (options) {
 		delete options.path;
 	}
 
-	if (NODE_ENV !== "production") {
+	if (options.console !== false && NODE_ENV !== "production") {
 		level = "silly";
 		transports.push(new InspectorConsoleTransport());
 	}
 
-	transports.push(new Console());
+	if (options.console !== false) {
+		transports.push(new Console());
+	}
+
+	delete options.console;
 
 	return winston.createLogger({
 		level,

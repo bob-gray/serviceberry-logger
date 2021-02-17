@@ -76,11 +76,15 @@ Reference
 
   - **options** *object*
 
-      - **path**
+      - **path** *string*
 
         See above
 
-      - All other properties are the meta data included with the logs
+      - **console** *boolean*
+
+        Set to `false` to stop the plugin from adding a stock console transport that prints logs to stdout and stderr.
+
+      - *All other properties are the meta data included with the logs*
 
 ### logger.error(request)
 
